@@ -15,22 +15,25 @@ export async function OPTIONS() {
 
 export async function POST(req: Request) {
   const { message } = await req.json();
-
   const apiKey = process.env.OPENAI_API_KEY;
 
-  const gptRes = await fetch("https://api.openai.com/v1/chat/completions", {
-    method: "POST",
-    headers: {
-      "Content-Type": "application/json",
-      Authorization: `Bearer ${apiKey}`,
-    },
-    body: JSON.stringify({
-      model: "gpt-3.5-turbo", // nebo "gpt-4", pokud máš přístup
-      messages: [
-        {
-          role: "system",
-          content: `
-Jsi přátelský chatbot firmy CleanStay v Praze. Nabízíme:
+  let reply = "Omlouvám se, momentálně nejsme dostupní. Zkuste to prosím později.";
+  let logReply = reply;
+
+  try {
+    const gptRes = await fetch("https://api.openai.com/v1/chat/completions", {
+      method: "POST",
+      headers: {
+        "Content-Type": "application/json",
+        Authorization: `Bearer ${apiKey}`,
+      },
+      body: JSON.stringify({
+        model: "gpt-3.5-turbo", // změň na gpt-4, pokud máš aktivní kredit
+        messages: [
+          {
+            role: "system",
+            content: `
+Jsi přátelský chatbot firmy CleanStay v Praze. Nabízíte:
 
 - Úklid domácností: od 290 Kč/hod.
 - Úklid firem a kanceláří
@@ -41,26 +44,31 @@ Jsi přátelský chatbot firmy CleanStay v Praze. Nabízíme:
 
 Ceník: https://cleanstay.cz/cenik
 
-Odpovídej mile, výstižně a navrhuj konkrétní službu podle dotazu klienta.
-          `,
-        },
-        {
-          role: "user",
-          content: message,
-        },
-      ],
-    }),
-  });
+Odpovídej mile, výstižně a nabídni konkrétní službu podle dotazu klienta.
+            `,
+          },
+          {
+            role: "user",
+            content: message,
+          },
+        ],
+      }),
+    });
 
-  const data = await gptRes.json();
-let reply = "Omlouvám se, něco se pokazilo.";
-if (data.choices?.[0]?.message?.content) {
-  reply = data.choices[0].message.content;
-} else if (data.error?.message) {
-  reply = `Chyba: ${data.error.message}`;
-}
+    const data = await gptRes.json();
 
-  // 📝 Logování do Google Sheets – asynchronně (bez čekání na výsledek)
+    if (data.choices?.[0]?.message?.content) {
+      reply = data.choices[0].message.content;
+      logReply = reply;
+    } else if (data.error?.message) {
+      logReply = `Chyba: ${data.error.message}`;
+    }
+
+  } catch (error) {
+    logReply = `Technická chyba: ${error}`;
+  }
+
+  // Logování do Google Sheet
   fetch(SHEET_WEBHOOK, {
     method: "POST",
     headers: {
@@ -68,7 +76,7 @@ if (data.choices?.[0]?.message?.content) {
     },
     body: JSON.stringify({
       question: message,
-      answer: reply,
+      answer: logReply,
       page: req.headers.get("referer") || "",
       ip: req.headers.get("x-forwarded-for") || "",
     }),
