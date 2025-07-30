@@ -163,3 +163,15 @@ Odpovídej mile, výstižně a nabídni konkrétní službu podle dotazu klienta
 },
   });
 }
+
+export async function OPTIONS(req: Request) {
+  return new NextResponse(null, {
+    status: 200,
+    headers: {
+      "Access-Control-Allow-Origin": req.headers.get("origin") || "*",
+      "Access-Control-Allow-Headers": "Content-Type",
+      "Access-Control-Allow-Methods": "POST, OPTIONS",
+      "Vary": "Origin",
+    },
+  });
+}
