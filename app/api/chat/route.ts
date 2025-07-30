@@ -80,7 +80,7 @@ Odpovídej mile, výstižně a nabídni konkrétní službu podle dotazu klienta
       page: req.headers.get("referer") || "",
       ip: req.headers.get("x-forwarded-for") || "",
     }),
-  }).catch((err) => console.error("Log error:", err));
+  }).catch((err) => console.error("Log error do Google Sheets:", err));
 
   return new NextResponse(JSON.stringify({ reply }), {
     status: 200,
