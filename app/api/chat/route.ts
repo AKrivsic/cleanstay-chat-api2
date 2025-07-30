@@ -28,5 +28,24 @@ export async function POST(req: Request) {
 
   const data = await gptRes.json();
   const reply = data.choices?.[0]?.message?.content || "Omlouvám se, něco se pokazilo.";
-  return NextResponse.json({ reply });
+
+  return new NextResponse(JSON.stringify({ reply }), {
+    status: 200,
+    headers: {
+      "Access-Control-Allow-Origin": "*",
+      "Access-Control-Allow-Headers": "Content-Type",
+    },
+  });
+}
+
+// volitelné pro preflight requests (pokud prohlížeč posílá OPTIONS)
+export async function OPTIONS() {
+  return new NextResponse(null, {
+    status: 204,
+    headers: {
+      "Access-Control-Allow-Origin": "*",
+      "Access-Control-Allow-Headers": "Content-Type",
+      "Access-Control-Allow-Methods": "POST, OPTIONS",
+    },
+  });
 }
