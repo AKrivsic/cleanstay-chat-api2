@@ -4,7 +4,7 @@ export async function OPTIONS() {
   return NextResponse.json(
     {},
     {
-      status: 204,
+      status: 200,
       headers: {
         "Access-Control-Allow-Origin": "*",
         "Access-Control-Allow-Headers": "Content-Type",
