@@ -72,7 +72,7 @@ function getFallbackReply(message: string): { reply: string; type: string } {
 
 import { NextResponse } from "next/server";
 
-const SHEET_WEBHOOK = "https://script.google.com/macros/s/AKfycbzXBKjaPEmmSf0AEFAyug3XxCuBp0ciPh-i5GGigZxMWRPbxn_xI8nx1dSstd7al9Rc/exec";
+const SHEET_WEBHOOK = "https://script.google.com/macros/s/AKfycbw5wTaXvIJjHxOhnwV82KR4lnjgIezfm03AQ9lEihucdmDnsZuSRVYxEY8OFHL-ri-s/exec";
 
 export async function POST(req: Request) {
   const { message, sessionId } = await req.json();
