@@ -137,6 +137,15 @@ Odpovídej mile, výstižně a nabídni konkrétní službu podle dotazu klienta
     type = fallback.type;
   }
 
+    console.log("📤 Odesílám do Google Sheets:", {
+  question: message,
+  answer: logReply,
+  page: req.headers.get("referer") || "",
+  ip: req.headers.get("x-forwarded-for") || "",
+  session: sessionId || "",
+  type: type,
+});
+
   await fetch(SHEET_WEBHOOK, {
     method: "POST",
     headers: {
