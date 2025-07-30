@@ -70,17 +70,21 @@ Odpovídej mile, výstižně a nabídni konkrétní službu podle dotazu klienta
 
   // Logování do Google Sheet
   fetch(SHEET_WEBHOOK, {
-    method: "POST",
-    headers: {
-      "Content-Type": "application/json",
-    },
-    body: JSON.stringify({
-      question: message,
-      answer: logReply,
-      page: req.headers.get("referer") || "",
-      ip: req.headers.get("x-forwarded-for") || "",
-    }),
-  }).catch((err) => console.error("Log error do Google Sheets:", err));
+  method: "POST",
+  headers: {
+    "Content-Type": "application/json",
+    "User-Agent": "Mozilla/5.0 CleanStayBot"
+  },
+  body: JSON.stringify({
+    question: message,
+    answer: logReply,
+    page: req.headers.get("referer") || "",
+    ip: req.headers.get("x-forwarded-for") || "",
+  }),
+})
+.catch((err) => {
+  console.error("Log error do Google Sheets:", err);
+});
 
   return new NextResponse(JSON.stringify({ reply }), {
     status: 200,
