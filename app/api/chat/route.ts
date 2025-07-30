@@ -133,7 +133,7 @@ Odpovídej mile, výstižně a nabídni konkrétní službu podle dotazu klienta
   } catch (error) {
     const fallback = getFallbackReply(message);
     reply = fallback.reply;
-    logReply = `Fallback error: ${fallback.reply}`;
+    logReply = `Fallback error: ${fallback.reply} (chyba: ${error})`;
     type = fallback.type;
   }
 
@@ -156,9 +156,10 @@ Odpovídej mile, výstižně a nabídni konkrétní službu podle dotazu klienta
   return new NextResponse(JSON.stringify({ reply }), {
     status: 200,
     headers: {
-      "Access-Control-Allow-Origin": "*",
-      "Access-Control-Allow-Headers": "Content-Type",
-      "Access-Control-Allow-Methods": "POST, OPTIONS",
-    },
+  "Access-Control-Allow-Origin": req.headers.get("origin") || "*",
+  "Access-Control-Allow-Headers": "Content-Type",
+  "Access-Control-Allow-Methods": "POST, OPTIONS",
+  "Vary": "Origin",
+},
   });
 }
