@@ -69,7 +69,7 @@ Odpovídej mile, výstižně a nabídni konkrétní službu podle dotazu klienta
   }
 
   // Logování do Google Sheet
-  fetch(SHEET_WEBHOOK, {
+  await fetch(SHEET_WEBHOOK, {
   method: "POST",
   headers: {
     "Content-Type": "application/json",
