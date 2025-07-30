@@ -53,7 +53,12 @@ Odpovídej mile, výstižně a navrhuj konkrétní službu podle dotazu klienta.
   });
 
   const data = await gptRes.json();
-  const reply = data.choices?.[0]?.message?.content || "Omlouvám se, něco se pokazilo.";
+let reply = "Omlouvám se, něco se pokazilo.";
+if (data.choices?.[0]?.message?.content) {
+  reply = data.choices[0].message.content;
+} else if (data.error?.message) {
+  reply = `Chyba: ${data.error.message}`;
+}
 
   // 📝 Logování do Google Sheets – asynchronně (bez čekání na výsledek)
   fetch(SHEET_WEBHOOK, {
